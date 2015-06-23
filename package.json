@@ -1,7 +1,7 @@
 {
     "name": "koa-combo-parse",
     "description": "A simple middleware of koa to parse combo url.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "author": "yPangXie <pangxie.wdy@gmail.com>",
     "engines": {
         "node": ">=0.12"

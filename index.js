@@ -12,8 +12,8 @@ const qs = require('querystring');
 const fs = require('co-fs-extra');
 const mime = require('mime');
 
-module.exports = function *(opts) {
-    var comboPrefixes = opt.prefixes || [];
+module.exports = function(opts) {
+    var comboPrefixes = opts.prefixes || [];
     var staticBase = opts.base || '';
 
     return function *(next){
