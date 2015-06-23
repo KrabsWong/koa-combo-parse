@@ -1,0 +1,21 @@
+{
+    "name": "koa-combo-parse",
+    "description": "A simple middleware of koa to parse combo url.",
+    "version": "0.0.1",
+    "author": "yPangXie <pangxie.wdy@gmail.com>",
+    "engines": {
+        "node": ">=0.12"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yPangXie/koa-combo-parse.git"
+    },
+    "dependencies": {
+        "co-fs-extra": "~1.0.1",
+        "mime": "~~1.3.4"
+    },
+    "devDependencies": {
+        "koa": "~0.14.0"
+    }
+}
