@@ -15,18 +15,14 @@ app.use(comboParse({
     // 静态资源根目录
     base: path.resolve(__dirname, './htdocs')
 }));
-
-/*
-http://www.ooxx.com/js/lib/??jquery.min.js,bootstrap.min.js,dust-full.js
-
-=>
-
-http://www.ooxx.com/js/lib/jquery.min.js
-http://www.ooxx.com/js/lib/bootstrap.min.js
-http://www.ooxx.com/js/lib/dust-full.js
-
-解析三个文件的数据, 合并之后返回
-*/
-
 ```
- No newline at end of file
+
+`http://www.ooxx.com/js/lib/??jquery.min.js,bootstrap.min.js,dust-full.js`
+
+解析为
+
+ - `http://www.ooxx.com/js/lib/jquery.min.js`
+ - `http://www.ooxx.com/js/lib/bootstrap.min.js`
+ - `http://www.ooxx.com/js/lib/dust-full.js`
+
+读取三个文件的数据, 合并之后返回
