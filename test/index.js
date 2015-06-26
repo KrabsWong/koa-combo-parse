@@ -7,13 +7,9 @@
 "use strict";
 
 const path = require('path');
-const assert = require("assert")
-const should = require('should');
 const request = require('supertest');
-const co = require('co');
-const urllib = require('urllib');
-const Static = require('koa-static');
 const app = require('koa')();
+const Static = require('koa-static');
 const comboParse = require('../');
 
 describe("Get data with combo url:", function() {
