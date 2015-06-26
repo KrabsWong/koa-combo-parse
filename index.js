@@ -19,7 +19,8 @@ module.exports = function(opts) {
     return function *(next){
         var parsedURL = url.parse(this.url);
         var pathname = parsedURL.pathname;
-        var query = parsedURL.query ? parsedURL.query.replace(/\s/g, '') : '';
+        var query = cleanQuery(parsedURL.query ? parsedURL.query.replace(/\s/g, '') : '');
+
         var codes = [];
 
         for(var i = 0, len = comboPrefixes.length; i < len; i++) {
@@ -44,5 +45,21 @@ module.exports = function(opts) {
         } else {
             yield next;
         }
+    }
+
+    /* 提取url query中以?开头的数据 */
+    function cleanQuery(query) {
+        if(!query) {
+            return '';
+        }
+
+        var queryArray = query.split('&');
+        for(var i = 0, len = queryArray.length; i < len; i++) {
+            if(/^\?/g.test(queryArray[i])) {
+                return queryArray[i];
+            }
+        }
+
+        return '';
     }
 }

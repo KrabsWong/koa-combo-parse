@@ -2,7 +2,7 @@
 
 一个简单的koa中间件, 用于解析combo的url.
 
-## 栗子
+## 例子
 
 ```javascript
 const path = require('path');
@@ -16,6 +16,7 @@ app.use(comboParse({
     base: path.resolve(__dirname, './htdocs')
 }));
 ```
+## 解析规则
 
 `http://www.ooxx.com/js/lib/??jquery.min.js,bootstrap.min.js,dust-full.js`
 
@@ -25,4 +26,6 @@ app.use(comboParse({
  - `http://www.ooxx.com/js/lib/bootstrap.min.js`
  - `http://www.ooxx.com/js/lib/dust-full.js`
 
-读取三个文件的数据, 合并之后返回
+读取三个文件的数据, 合并之后返回.
+
+url中只会获取`?`开头的数据, 即`http://www.ooxx.com/js/lib/??jquery.min.js,bootstrap.min.js,dust-full.js&_=12323`中`&`后的数据会被抛弃(避免在query中出现多个以`?`开头的数据)
