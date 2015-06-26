@@ -29,3 +29,9 @@ app.use(comboParse({
 读取三个文件的数据, 合并之后返回.
 
 url中只会获取`?`开头的数据, 即`http://www.ooxx.com/js/lib/??jquery.min.js,bootstrap.min.js,dust-full.js&_=12323`中`&`后的数据会被抛弃(避免在query中出现多个以`?`开头的数据)
+
+## DEBUG
+
+```javascript
+DEBUG=koa-combo-parse
+```
