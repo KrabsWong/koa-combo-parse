@@ -11,9 +11,9 @@ const url = require('url');
 const qs = require('querystring');
 const fs = require('co-fs-extra');
 const mime = require('mime');
+const debug = require('debug')('koa-combo-parse');
 
 module.exports = function(opts) {
-    var comboPrefixes = opts.prefixes || [];
     var staticBase = opts.base || '';
 
     return function *(next){
@@ -21,24 +21,27 @@ module.exports = function(opts) {
         var pathname = parsedURL.pathname;
         var query = cleanQuery(parsedURL.query ? parsedURL.query.replace(/\s/g, '') : '');
 
+        debug('query: %s', query);
+        debug('pathname: %s', pathname);
         var codes = [];
 
-        for(var i = 0, len = comboPrefixes.length; i < len; i++) {
-            var comboItem = comboPrefixes[i];
-            var regPathname = new RegExp(comboItem + '$', 'g');
-            /* URL格式校验, 禁止包含'..' */
-            if(regPathname.test(comboItem) && /^\?/.test(query) && !/\.\./g.test(this.url)) {
-                var sourceList = query.replace('?', '').split(',');
-                var extname = path.extname(sourceList[0]) || '.html';
-                this.set('content-type', mime.lookup(extname));
-
-                for(var j = 0, l = sourceList.length; j < l; j++) {
-                    var sourceItem = sourceList[j];
-                    var code = yield fs.readFile(path.join(staticBase, comboItem, sourceItem));
-                    codes.push(new Buffer(code).toString());
+        /* URL格式校验, 禁止包含'..' */
+        if(/^\?/.test(query) && !/\.\./g.test(this.url)) {
+            var sourceList = query.replace('?', '').split(',');
+            var extname = path.extname(sourceList[0]) || '.html';
+            this.set('content-type', mime.lookup(extname));
+            debug("extname: %s, mime: %s", extname, mime.lookup(extname));
+            for(var j = 0, l = sourceList.length; j < l; j++) {
+                var sourceItem = sourceList[j];
+                try {
+                    var code = yield fs.readFile(path.join(staticBase, pathname, sourceItem));
+                } catch(e) {
+                    continue;
                 }
-            };
-        }
+
+                codes.push(new Buffer(code).toString());
+            }
+        };
 
         if(codes.length > 0) {
             this.body = codes.join('\n');
@@ -55,8 +58,10 @@ module.exports = function(opts) {
 
         var queryArray = query.split('&');
         for(var i = 0, len = queryArray.length; i < len; i++) {
-            if(/^\?/g.test(queryArray[i])) {
-                return queryArray[i];
+            var queryItem = decodeURIComponent(queryArray[i]).replace('=', '');
+            if(/^\?/g.test(queryItem)) {
+                debug('matched query: %s', queryItem) ;
+                return queryItem;
             }
         }
 
