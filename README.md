@@ -2,6 +2,12 @@
 
 一个简单的koa中间件, 用于解析combo的url.
 
+## 安装
+
+```javascript
+npm install koa-combo-parse
+```
+
 ## 例子
 
 ```javascript
