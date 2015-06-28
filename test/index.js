@@ -14,7 +14,7 @@ const comboParse = require('../');
 
 describe("Get data with combo url:", function() {
     app.use(comboParse({
-        prefixes: ['/'],
+        miniCSS: true,
         base: path.resolve(__dirname, './files')
     }));
 

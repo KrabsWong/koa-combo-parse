@@ -9,32 +9,35 @@
 const path = require('path');
 const url = require('url');
 const qs = require('querystring');
+const bluebird = require('bluebird');
 const fs = require('co-fs-extra');
 const mime = require('mime');
+const util = require('./lib/util');
+const compressCSS = require('./lib/compress-css');
 const debug = require('debug')('koa-combo-parse');
 
 module.exports = function(opts) {
-    var staticBase = opts.base || '';
-
     return function *(next){
         var parsedURL = url.parse(this.url);
         var pathname = parsedURL.pathname;
-        var query = cleanQuery(parsedURL.query ? parsedURL.query.replace(/\s/g, '') : '');
+        var queryObj = util.queryHandler(parsedURL.query ? parsedURL.query.replace(/\s/g, '') : '');
 
-        debug('query: %s', query);
+        debug('query: %o', queryObj);
         debug('pathname: %s', pathname);
+
+        var sourceList = queryObj.q.replace('?', '').split(',');
+        var extname = path.extname(sourceList[0]) || '.html';
         var codes = [];
 
         /* URL格式校验, 禁止包含'..' */
-        if(/^\?/.test(query) && !/\.\./g.test(this.url)) {
-            var sourceList = query.replace('?', '').split(',');
-            var extname = path.extname(sourceList[0]) || '.html';
+        if(/^\?/.test(queryObj.q) && !/\.\./g.test(this.url)) {
             this.set('content-type', mime.lookup(extname));
+
             debug("extname: %s, mime: %s", extname, mime.lookup(extname));
             for(var j = 0, l = sourceList.length; j < l; j++) {
                 var sourceItem = sourceList[j];
                 try {
-                    var code = yield fs.readFile(path.join(staticBase, pathname, sourceItem));
+                    var code = yield fs.readFile(path.join((opts.base || ''), pathname, sourceItem));
                 } catch(e) {
                     continue;
                 }
@@ -44,27 +47,14 @@ module.exports = function(opts) {
         };
 
         if(codes.length > 0) {
-            this.body = codes.join('\n');
+            var sourceCode = codes.join('\n');
+            if(extname == '.css' && (opts.miniCSS || queryObj.m)) {
+                this.body = yield compressCSS(sourceCode);
+            } else {
+                this.body = sourceCode;
+            }
         } else {
             yield next;
         }
-    }
-
-    /* 提取url query中以?开头的数据 */
-    function cleanQuery(query) {
-        if(!query) {
-            return '';
-        }
-
-        var queryArray = query.split('&');
-        for(var i = 0, len = queryArray.length; i < len; i++) {
-            var queryItem = decodeURIComponent(queryArray[i]).replace('=', '');
-            if(/^\?/g.test(queryItem)) {
-                debug('matched query: %s', queryItem) ;
-                return queryItem;
-            }
-        }
-
-        return '';
     }
 }
