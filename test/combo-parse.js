@@ -1,7 +1,7 @@
 /*
  * Author: yPangXie <pangxie.wdy@gmail.com>
  * Date: 2015-06-26
- * Des: koa中间件, 解析combo的URL: 测试
+ * Des: koa中间件, 解析combo的URL: 测试combo url解析
  */
 
 "use strict";

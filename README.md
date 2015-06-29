@@ -5,7 +5,7 @@
 ## 安装
 
 ```javascript
-npm install koa-combo-parse
+npm install koa-combo-parse --save
 ```
 
 ## 例子
@@ -16,12 +16,11 @@ const app = require('koa')();
 const comboParse = require('koa-combo-parse');
 
 app.use(comboParse({
-    miniCSS: false,
+    miniCSS: true,
     base: path.resolve(__dirname, './htdocs')
 }));
 
 ```
-
 
 ## 参数说明
 
@@ -31,11 +30,10 @@ app.use(comboParse({
 
 提供两种方式标识是否压缩`CSS`
 
-> 全局设置`miniCSS`之后，会忽略`_mcss`的值
+> 全局设置`miniCSS`之后，会忽略`_mcss`的值. 若压缩出现异常, 则会返回未压缩的代码
 
 1. 初始化插件的时候设置`miniCSS`为`true`, 则所有combo的css都会压缩之后输出到客户端
 2. 单个combo的url中增加`_mcss`字段,设置为`true`或`y`, 则该url对应的文件压缩后输出
-
 
 例: 
 
@@ -44,15 +42,16 @@ app.use(comboParse({
 http://www.ooxx.com/??a.css,b.css&_mcss=true
 http://www.ooxx.com/??a.css,b.css
 
-// 第二种情况(只有第一个URL中的CSS会做压缩处理)
+// 第二种情况(前两个URL解析出的CSS会做压缩处理)
 http://www.ooxx.com/??a.css,b.css&_mcss=true
+http://www.ooxx.com/??a.css,b.css&_mcss=y
+http://www.ooxx.com/??a.css,b.css&_mcss=1
 http://www.ooxx.com/??a.css,b.css
 ```
 
 ### base(string)
 
 静态资源根目录(解析结果会拼接该目录和pathname作为文件所在目录)
-
 
 ## 解析规则
 
